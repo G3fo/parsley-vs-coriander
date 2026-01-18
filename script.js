@@ -8,7 +8,9 @@ const gameState = {
     },
     answerSubmitted: false,
     imagePool: [],
-    usedImages: []
+    usedImages: [],
+    questionsAnswered: 0,
+    maxQuestions: 20
 };
 
 // DOM Elements
@@ -120,6 +122,12 @@ function showAnswerReveal() {
 
 // Load a new image
 function loadNewImage() {
+    // Check if quiz is complete
+    if (gameState.questionsAnswered >= gameState.maxQuestions) {
+        showCompletion();
+        return;
+    }
+
     // Reset state
     gameState.answerSubmitted = false;
     elements.feedback.style.display = 'none';
@@ -131,9 +139,11 @@ function loadNewImage() {
     elements.parsleyBtn.classList.remove('correct', 'incorrect');
     elements.corianderBtn.classList.remove('correct', 'incorrect');
 
-    // Check if we need to reload the pool
+    // Check if we have images left in pool
     if (gameState.imagePool.length === 0) {
-        loadImagePool();
+        // Should not happen with max 20 questions, but just in case
+        showCompletion();
+        return;
     }
 
     // Get next image from pool
@@ -175,6 +185,8 @@ function handleAnswer(userAnswer) {
     if (gameState.answerSubmitted) return;
 
     gameState.answerSubmitted = true;
+    gameState.questionsAnswered++;
+
     const correctAnswer = gameState.currentImage.answer;
     const isCorrect = userAnswer === correctAnswer;
 
@@ -204,6 +216,11 @@ function handleAnswer(userAnswer) {
 
     // Show feedback
     showFeedback(isCorrect, correctAnswer);
+
+    // Update next button text for last question
+    if (gameState.questionsAnswered >= gameState.maxQuestions) {
+        elements.nextBtn.textContent = 'See Results →';
+    }
 
     // Show next button
     elements.nextBtn.style.display = 'block';
@@ -241,6 +258,107 @@ function updateScoreDisplay() {
 
     elements.scoreDisplay.textContent = `${correct} / ${total}`;
     elements.accuracyDisplay.textContent = `${accuracy}%`;
+}
+
+// Show completion screen
+function showCompletion() {
+    // Hide game elements
+    elements.feedback.style.display = 'none';
+    elements.nextBtn.style.display = 'none';
+    elements.answerReveal.style.display = 'none';
+    elements.parsleyBtn.style.display = 'none';
+    elements.corianderBtn.style.display = 'none';
+    elements.herbImage.style.display = 'none';
+    elements.imageLoader.style.display = 'none';
+
+    // Calculate final results
+    const { correct, total } = gameState.score;
+    const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    // Determine performance message
+    let performanceMessage = '';
+    let performanceEmoji = '';
+
+    if (gameState.learnMode || total === 0) {
+        performanceMessage = 'You completed the quiz in Learn Mode!';
+        performanceEmoji = '📚';
+    } else if (accuracy === 100) {
+        performanceMessage = 'Perfect score! You\'re a herb identification expert!';
+        performanceEmoji = '🏆';
+    } else if (accuracy >= 80) {
+        performanceMessage = 'Excellent work! You know your herbs well!';
+        performanceEmoji = '🌟';
+    } else if (accuracy >= 60) {
+        performanceMessage = 'Good job! Keep practicing to improve!';
+        performanceEmoji = '👍';
+    } else {
+        performanceMessage = 'Nice try! Practice makes perfect!';
+        performanceEmoji = '🌱';
+    }
+
+    // Create completion screen
+    const completionHTML = `
+        <div class="completion-screen">
+            <h2>${performanceEmoji} Quiz Complete! ${performanceEmoji}</h2>
+            <div class="completion-stats">
+                ${!gameState.learnMode && total > 0 ? `
+                    <div class="completion-stat">
+                        <div class="stat-number">${correct}/${total}</div>
+                        <div class="stat-label">Correct Answers</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="stat-number">${accuracy}%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                ` : `
+                    <div class="completion-stat">
+                        <div class="stat-number">${gameState.questionsAnswered}</div>
+                        <div class="stat-label">Questions Reviewed</div>
+                    </div>
+                `}
+            </div>
+            <p class="completion-message">${performanceMessage}</p>
+            <button class="restart-btn" onclick="restartQuiz()">🔄 Try Again</button>
+        </div>
+    `;
+
+    // Insert completion screen
+    const gameArea = document.querySelector('.game-area');
+    const existingCompletion = gameArea.querySelector('.completion-screen');
+    if (existingCompletion) {
+        existingCompletion.remove();
+    }
+    gameArea.insertAdjacentHTML('afterbegin', completionHTML);
+}
+
+// Restart the quiz
+function restartQuiz() {
+    // Reset game state
+    gameState.currentImage = null;
+    gameState.score.correct = 0;
+    gameState.score.total = 0;
+    gameState.answerSubmitted = false;
+    gameState.questionsAnswered = 0;
+    gameState.usedImages = [];
+
+    // Reset UI
+    elements.parsleyBtn.style.display = 'inline-block';
+    elements.corianderBtn.style.display = 'inline-block';
+    elements.herbImage.style.display = 'block';
+    elements.nextBtn.textContent = 'Next Image →';
+
+    // Remove completion screen
+    const completionScreen = document.querySelector('.completion-screen');
+    if (completionScreen) {
+        completionScreen.remove();
+    }
+
+    // Update score display
+    updateScoreDisplay();
+
+    // Reload image pool and start fresh
+    loadImagePool();
+    loadNewImage();
 }
 
 // Initialize the game when DOM is ready

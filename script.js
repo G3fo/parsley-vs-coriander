@@ -178,12 +178,14 @@ function handleAnswer(userAnswer) {
     const correctAnswer = gameState.currentImage.answer;
     const isCorrect = userAnswer === correctAnswer;
 
-    // Update score
-    gameState.score.total++;
-    if (isCorrect) {
-        gameState.score.correct++;
+    // Update score (only if NOT in learn mode)
+    if (!gameState.learnMode) {
+        gameState.score.total++;
+        if (isCorrect) {
+            gameState.score.correct++;
+        }
+        updateScoreDisplay();
     }
-    updateScoreDisplay();
 
     // Disable buttons
     elements.parsleyBtn.disabled = true;
@@ -217,10 +219,18 @@ function showFeedback(isCorrect, correctAnswer) {
 
     if (isCorrect) {
         elements.feedbackMessage.textContent = '✓ Correct!';
-        elements.feedbackDescription.textContent = `Well done! That was ${correctAnswer}.`;
+        let description = `Well done! That was ${correctAnswer}.`;
+        if (gameState.learnMode) {
+            description += ' (Not counted - Learn Mode)';
+        }
+        elements.feedbackDescription.textContent = description;
     } else {
         elements.feedbackMessage.textContent = '✗ Incorrect';
-        elements.feedbackDescription.textContent = `That was actually ${correctAnswer}. ${gameState.currentImage.description}`;
+        let description = `That was actually ${correctAnswer}. ${gameState.currentImage.description}`;
+        if (gameState.learnMode) {
+            description += ' (Not counted - Learn Mode)';
+        }
+        elements.feedbackDescription.textContent = description;
     }
 }
 

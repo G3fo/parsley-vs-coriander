@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parsley vs Coriander Quiz</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <h1>🌿 Parsley vs Coriander Quiz 🌿</h1>
+            <p class="subtitle">Test your herb identification skills!</p>
+        </header>
+
+        <!-- Controls Section -->
+        <div class="controls">
+            <!-- Learn Mode Toggle -->
+            <div class="learn-mode-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="learnModeCheckbox">
+                    <span class="slider"></span>
+                </label>
+                <label for="learnModeCheckbox">Learn Mode</label>
+            </div>
+        </div>
+
+        <!-- Score Display -->
+        <div class="score-panel">
+            <div class="score-item">
+                <span class="score-label">Score:</span>
+                <span class="score-value" id="scoreDisplay">0 / 0</span>
+            </div>
+            <div class="score-item">
+                <span class="score-label">Accuracy:</span>
+                <span class="score-value" id="accuracyDisplay">0%</span>
+            </div>
+        </div>
+
+        <!-- Main Game Area -->
+        <div class="game-area">
+            <!-- Educational Info (shown in learn mode) -->
+            <div class="educational-panel" id="educationalPanel" style="display: none;">
+                <h3>Learn About the Differences</h3>
+                <div class="differences-grid">
+                    <div class="herb-info">
+                        <h4>🌿 Parsley</h4>
+                        <ul>
+                            <li><strong>Leaf Shape:</strong> <span id="parsleyLeafShape"></span></li>
+                            <li><strong>Stems:</strong> <span id="parsleyStems"></span></li>
+                            <li><strong>Taste:</strong> <span id="parsleyTaste"></span></li>
+                            <li><strong>Appearance:</strong> <span id="parsleyAppearance"></span></li>
+                        </ul>
+                        <p class="tip" id="parsleyTip"></p>
+                    </div>
+                    <div class="herb-info">
+                        <h4>🌿 Coriander/Cilantro</h4>
+                        <ul>
+                            <li><strong>Leaf Shape:</strong> <span id="corianderLeafShape"></span></li>
+                            <li><strong>Stems:</strong> <span id="corianderStems"></span></li>
+                            <li><strong>Taste:</strong> <span id="corianderTaste"></span></li>
+                            <li><strong>Appearance:</strong> <span id="corianderAppearance"></span></li>
+                        </ul>
+                        <p class="tip" id="corianderTip"></p>
+                    </div>
+                </div>
+                <div class="key-differences">
+                    <h4>Key Differences:</h4>
+                    <ul id="differencesList"></ul>
+                </div>
+            </div>
+
+            <!-- Answer Reveal (shown in learn mode) -->
+            <div class="answer-reveal" id="answerReveal" style="display: none;">
+                <p>This is: <strong id="revealedAnswer"></strong></p>
+            </div>
+
+            <!-- Image Display -->
+            <div class="image-container">
+                <img id="herbImage" src="" alt="Herb to identify" />
+                <div class="image-loader" id="imageLoader">Loading...</div>
+            </div>
+
+            <!-- Answer Buttons -->
+            <div class="answer-buttons">
+                <button class="answer-btn" id="parsleyBtn" data-answer="parsley">
+                    🌿 Parsley
+                </button>
+                <button class="answer-btn" id="corianderBtn" data-answer="coriander">
+                    🌿 Coriander
+                </button>
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="feedback" id="feedback" style="display: none;">
+                <p class="feedback-message" id="feedbackMessage"></p>
+                <p class="feedback-description" id="feedbackDescription"></p>
+            </div>
+
+            <!-- Next Button -->
+            <div class="next-button-container">
+                <button class="next-btn" id="nextBtn" style="display: none;">
+                    Next Image →
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Made with 🌿 for herb enthusiasts</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="images.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
